@@ -16,9 +16,9 @@ collection = db["cheatsheets"]
 async def root():
     return {"message": "Welcome to the Cheatsheet API"}
 
-@app.get("/cheatsheet/{name}")
+@app.get("/{name}")
 async def get_cheatsheet(name: str):
-    cheatsheet = await collection.find_one({"_id": name})  # Assuming "_id" is the cheatsheet name
+    cheatsheet = await collection.find_one({"_id": name})
 
     if cheatsheet:
         cheatsheet["_id"] = str(cheatsheet["_id"])  # Convert ObjectId to string
