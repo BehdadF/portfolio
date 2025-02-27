@@ -9,28 +9,29 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://10.0.57.10:5173"],  # Replace with your frontend URL
+    allow_origins=["https://10.0.57.10:5173"],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["Content-Type", "Authorization"],
 )
 
 
-# Connect to MongoDB
 client = AsyncIOMotorClient(MONGO_URI)
 db = client["cheatsheets_db"]
 collection = db["cheatsheets"]
 
 @app.get("/")
 async def root():
-    return {"message": "Welcome to the Cheatsheet API"}
+    documents = await collection.find({}, {"_id": 1}).to_list(length=None)
+    ids = [str(doc["_id"]) for doc in documents]
+    return {"ids": ids}
 
 @app.get("/{name}")
 async def get_cheatsheet(name: str):
     cheatsheet = await collection.find_one({"_id": name})
 
     if cheatsheet:
-        cheatsheet["_id"] = str(cheatsheet["_id"])  # Convert ObjectId to string
+        cheatsheet["_id"] = str(cheatsheet["_id"])
         return cheatsheet
     else:
         raise HTTPException(status_code=404, detail="Cheatsheet not found")
