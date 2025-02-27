@@ -1,11 +1,20 @@
 import os
 from fastapi import FastAPI, HTTPException
 from motor.motor_asyncio import AsyncIOMotorClient
-
+from fastapi.middleware.cors import CORSMiddleware
 
 MONGO_URI = os.getenv("DATABASE")  
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://10.0.57.10:5173"],  # Replace with your frontend URL
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_headers=["Content-Type", "Authorization"],
+)
+
 
 # Connect to MongoDB
 client = AsyncIOMotorClient(MONGO_URI)
