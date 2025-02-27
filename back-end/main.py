@@ -18,10 +18,11 @@ async def root():
 
 @app.get("/{name}")
 async def get_cheatsheet(name: str):
-    cheatsheet = await collection.find_one({"_id": name})
+    return {f"{name}"}
+    # cheatsheet = await collection.find_one({"_id": name})
 
-    if cheatsheet:
-        cheatsheet["_id"] = str(cheatsheet["_id"])  # Convert ObjectId to string
-        return cheatsheet
-    else:
-        raise HTTPException(status_code=404, detail="Cheatsheet not found")
+    # if cheatsheet:
+    #     cheatsheet["_id"] = str(cheatsheet["_id"])  # Convert ObjectId to string
+    #     return cheatsheet
+    # else:
+    #     raise HTTPException(status_code=404, detail="Cheatsheet not found")
