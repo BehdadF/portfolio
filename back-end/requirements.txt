@@ -2,3 +2,5 @@ fastapi>=0.100.0
 hypercorn>=0.14.4
 starlette>=0.37.0
 pymongo>=4.11.0
+pymongo[srv]>=
+certifi>=2025.1.31
