@@ -7,6 +7,7 @@ import sys
 
 try:
     MONGO_URI = os.getenv("DATABASE")  
+    print(MANG__URI)
     client = pymongo.MongoClient(MONGO_URI)
   
 except pymongo.errors.ConfigurationError:
