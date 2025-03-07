@@ -1,17 +1,16 @@
 import os
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-import pymongo
+import motor.motor_asyncio
 import sys
 
 
 try:
     MONGO_URI = os.getenv("DATABASE")  
-    print("Your URI:", MONGO_URI)
-    client = pymongo.MongoClient(MONGO_URI)
+    client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_URI)
   
-except pymongo.errors.ConfigurationError:
-  print("An Invalid URI host error was received. Is your Atlas host name correct in your connection string?")
+except Exception as e:
+  print(f"An Invalid URI host error was received.\n {e}")
   sys.exit(1)
 
 
