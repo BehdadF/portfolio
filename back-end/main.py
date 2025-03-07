@@ -1,18 +1,20 @@
 import os
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-import motor.motor_asyncio
+
+import sys
+
+import pymongo
 import sys
 
 
 try:
     MONGO_URI = os.getenv("DATABASE")  
-    client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_URI)
+    client = pymongo.MongoClient(MONGO_URI)
   
-except Exception as e:
-  print(f"An Invalid URI host error was received.\n {e}")
+except pymongo.errors.ConfigurationError:
+  print("An Invalid URI host error was received. Is your Atlas host name correct in your connection string?")
   sys.exit(1)
-
 
 app = FastAPI()
 
@@ -27,10 +29,12 @@ app.add_middleware(
 
 db = client["cheatsheets_db"]
 collection = db["cheatsheets"]
-
+print(collection.find())
 @app.get("/")
 async def root():
-    return {"You need to specify an endpoint"}
+    result = collection.find()
+    # return {"You need to specify an endpoint"}
+    return result
 
 @app.get("/ids")
 async def get_ids():
