@@ -1,45 +1,39 @@
 import os
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+import motor.motor_asyncio
+from bson import ObjectId
 
-import sys
+# Ensure MONGO_URI is set
+MONGO_URI = os.getenv("DATABASE")
+if not MONGO_URI:
+    raise ValueError("DATABASE environment variable is not set!")
 
-import pymongo
-import sys
-
-
+# Connect to MongoDB
 try:
-    MONGO_URI = os.getenv("DATABASE")  
-    client = pymongo.MongoClient(MONGO_URI)
-  
-except pymongo.errors.ConfigurationError:
-  print("An Invalid URI host error was received. Is your Atlas host name correct in your connection string?")
-  sys.exit(1)
+    client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_URI)
+except Exception as e:
+    print(f"An Invalid URI host error was received.\n {e}")
+    sys.exit(1)  # Exit if DB connection fails
 
+# Initialize FastAPI
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://10.0.57.10:5173", "https://www.behdadf.com", "0.0.0.0"],
+    allow_origins=["*"],  # Allow all origins (change for security)
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["Content-Type", "Authorization"],
 )
 
-
+# Database and Collection
 db = client["cheatsheets_db"]
 collection = db["cheatsheets"]
-print(collection.find())
+
 @app.get("/")
 async def root():
-    # result = collection.find()
-    # if result:    
-    #     for doc in result:
-    #         ids = doc['_id']
-         
-    #         print("id" ,ids)
-    return {"You need to specify an endpoint"}
-    # return ids
+    return {"message": "You need to specify an endpoint"}
 
 @app.get("/ids")
 async def get_ids():
@@ -49,10 +43,15 @@ async def get_ids():
 
 @app.get("/{name}")
 async def get_cheatsheet(name: str):
-    cheatsheet = await collection.find_one({"_id": name})
+    try:
+        object_id = ObjectId(name)  # Convert name to ObjectId if necessary
+    except:
+        raise HTTPException(status_code=400, detail="Invalid ID format")
 
-    if cheatsheet:
-        cheatsheet["_id"] = str(cheatsheet["_id"])
-        return cheatsheet
-    else:
+    cheatsheet = await collection.find_one({"_id": object_id})
+
+    if cheatsheet is None:
         raise HTTPException(status_code=404, detail="Cheatsheet not found")
+
+    cheatsheet["_id"] = str(cheatsheet["_id"])  # Convert ObjectId to string
+    return cheatsheet
