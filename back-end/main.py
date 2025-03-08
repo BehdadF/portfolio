@@ -32,27 +32,27 @@ collection = db["cheatsheets"]
 print(collection.find())
 @app.get("/")
 async def root():
-    result = collection.find()
-    if result:    
-        for doc in result:
-            ids = doc['_id']
+    # result = collection.find()
+    # if result:    
+    #     for doc in result:
+    #         ids = doc['_id']
          
-            print("id" ,ids)
-    # return {"You need to specify an endpoint"}
-    return ids
+    #         print("id" ,ids)
+    return {"You need to specify an endpoint"}
+    # return ids
 
-# @app.get("/ids")
-# async def get_ids():
-#     documents = await collection.find({}, {"_id": 1}).to_list(length=None)
-#     ids = [str(doc["_id"]) for doc in documents]
-#     return {"ids": ids}
+@app.get("/ids")
+async def get_ids():
+    documents = await collection.find({}, {"_id": 1}).to_list(length=None)
+    ids = [str(doc["_id"]) for doc in documents]
+    return {"ids": ids}
 
-# @app.get("/{name}")
-# async def get_cheatsheet(name: str):
-#     cheatsheet = await collection.find_one({"_id": name})
+@app.get("/{name}")
+async def get_cheatsheet(name: str):
+    cheatsheet = await collection.find_one({"_id": name})
 
-#     if cheatsheet:
-#         cheatsheet["_id"] = str(cheatsheet["_id"])
-#         return cheatsheet
-#     else:
-#         raise HTTPException(status_code=404, detail="Cheatsheet not found")
+    if cheatsheet:
+        cheatsheet["_id"] = str(cheatsheet["_id"])
+        return cheatsheet
+    else:
+        raise HTTPException(status_code=404, detail="Cheatsheet not found")
