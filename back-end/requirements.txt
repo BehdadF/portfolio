@@ -4,3 +4,4 @@ starlette>=0.37.0
 pymongo>=4.11.0
 pymongo[srv]>=2.7.0
 certifi>=2025.1.31
+motor>=3.1.2
