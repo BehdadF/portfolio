@@ -36,12 +36,23 @@ collection = db["cheatsheets"]
 async def root():
     return {"message": "You need to specify an endpoint"}
 
-@app.get("cheatsheets/ids")
+@app.get("/ids")
 async def get_ids():
-    documents = await collection.find({}, {"_id": 1}).to_list(length=None)
-    ids = [str(doc["_id"]) for doc in documents]
-    return {"ids": ids}
+    # documents = await collection.find({}, {"_id": 1}).to_list(length=None)
+    # ids = [str(doc["_id"]) for doc in documents]
+    # return {"ids": ids}
+    try:
+        object_id = ObjectId('ids')
+    except:
+        raise HTTPException(status_code=400, detail="Invalid ID format")
 
+    cheatsheetNames = await collection.find_one({"_id": object_id})
+
+    if cheatsheetNames is None:
+        raise HTTPException(status_code=404, detail="Cheatsheet not found")
+
+    cheatsheetNames["_id"] = str(cheatsheetNames["_id"])  # Convert ObjectId to string
+    return cheatsheetNames
 @app.get("/{name}")
 async def get_cheatsheet(name: str):
     try:
