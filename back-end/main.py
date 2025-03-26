@@ -38,10 +38,10 @@ async def root():
     return {"message": "You need to specify an endpoint"}
 
 @app.get("/ids")
- async def get_ids():
-     documents = await collection.find({}, {"_id": 1}).to_list(length=None)
-     ids = [str(doc["_id"]) for doc in documents]
-     return {"ids": ids}
+async def get_ids():
+    documents = await collection.find({}, {"_id": 1}).to_list(length=None)
+    ids = [str(doc["_id"]) for doc in documents]
+    return {"ids": ids}
 
 @app.get("/{name}")
 async def get_cheatsheet(name: str):
