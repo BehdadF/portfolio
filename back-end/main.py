@@ -35,7 +35,7 @@ collection = db["cheatsheets"]
 async def root():
     return {"message": "You need to specify an endpoint"}
 
-@app.get("/ids")
+@app.get("cheatsheets/ids")
 async def get_ids():
     documents = await collection.find({}, {"_id": 1}).to_list(length=None)
     ids = [str(doc["_id"]) for doc in documents]
